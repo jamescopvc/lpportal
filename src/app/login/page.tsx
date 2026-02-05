@@ -99,85 +99,93 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="w-full max-w-sm px-6">
-        <h1 className="text-2xl font-semibold mb-8">ScOp LP Portal</h1>
+        <h1 className="text-4xl font-light tracking-tight mb-12">
+          ScOp Venture Capital
+          <br />
+          LP Portal
+        </h1>
 
         {state === "email" && (
           <div>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-xs font-medium text-gray-500">
+              Email
+            </Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleEmailContinue()}
-              className="mt-1"
+              className="mt-2"
               autoFocus
             />
             <Button
               onClick={handleEmailContinue}
               disabled={loading || !email}
-              className="w-full mt-4"
+              className="w-full mt-6"
             >
               {loading ? "Loading..." : "Continue"}
             </Button>
-            {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+            {error && <p className="text-red-600 text-sm mt-3">{error}</p>}
           </div>
         )}
 
         {state === "not_allowed" && (
           <div>
-            <p className="text-sm">Contact ScOp for access.</p>
-            <button onClick={handleBack} className="text-sm underline mt-4">
-              Back
+            <p className="text-sm text-gray-600">Contact ScOp for access.</p>
+            <button onClick={handleBack} className="text-sm text-gray-400 hover:text-black transition-colors mt-6">
+              ← Back
             </button>
           </div>
         )}
 
         {(state === "magic_link_sent" || state === "reset_sent") && (
           <div>
-            <p className="text-sm">
+            <p className="text-sm text-gray-600">
               {state === "magic_link_sent"
                 ? "Check your email for a login link."
                 : "Check your email for a password reset link."}
             </p>
-            <button onClick={handleBack} className="text-sm underline mt-4">
-              Back
+            <button onClick={handleBack} className="text-sm text-gray-400 hover:text-black transition-colors mt-6">
+              ← Back
             </button>
           </div>
         )}
 
         {state === "password" && (
           <div>
-            <p className="text-sm text-gray-500 mb-4">{email}</p>
-            <Label htmlFor="password">Password</Label>
+            <p className="text-sm text-gray-400 mb-6">{email}</p>
+            <Label htmlFor="password" className="text-xs font-medium text-gray-500">
+              Password
+            </Label>
             <Input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSignIn()}
-              className="mt-1"
+              className="mt-2"
               autoFocus
             />
             <Button
               onClick={handleSignIn}
               disabled={loading || !password}
-              className="w-full mt-4"
+              className="w-full mt-6"
             >
               {loading ? "Loading..." : "Sign in"}
             </Button>
-            <div className="flex justify-between mt-3">
+            <div className="flex justify-between mt-4">
               <button
                 onClick={handleForgotPassword}
-                className="text-sm underline"
+                className="text-sm text-gray-400 hover:text-black transition-colors"
               >
                 Forgot password
               </button>
-              <button onClick={handleBack} className="text-sm underline">
-                Back
+              <button onClick={handleBack} className="text-sm text-gray-400 hover:text-black transition-colors">
+                ← Back
               </button>
             </div>
-            {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+            {error && <p className="text-red-600 text-sm mt-3">{error}</p>}
           </div>
         )}
       </div>
