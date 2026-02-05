@@ -39,7 +39,7 @@ export default function LoginPage() {
         case "new_user":
           const magicResult = await sendMagicLink(email);
           if (magicResult && !magicResult.success) {
-            setError(magicResult.error);
+            setError(magicResult.error || "An error occurred");
           } else {
             setState("magic_link_sent");
           }
@@ -62,7 +62,7 @@ export default function LoginPage() {
     try {
       const result = await signInWithPassword(email, password);
       if (result && !result.success) {
-        setError(result.error);
+        setError(result.error || "Invalid credentials");
         setLoading(false);
       }
       // If successful, redirect happens automatically
@@ -79,7 +79,7 @@ export default function LoginPage() {
     try {
       const result = await resetPassword(email);
       if (result && !result.success) {
-        setError(result.error);
+        setError(result.error || "An error occurred");
       } else {
         setState("reset_sent");
       }
