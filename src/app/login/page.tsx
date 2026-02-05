@@ -1,0 +1,174 @@
+"use client";
+
+import { useState } from "react";
+import {
+  checkEmail,
+  sendMagicLink,
+  signInWithPassword,
+  resetPassword,
+} from "@/lib/actions/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+type LoginState =
+  | "email"
+  | "password"
+  | "magic_link_sent"
+  | "not_allowed"
+  | "reset_sent";
+
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [state, setState] = useState<LoginState>("email");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleEmailContinue = async () => {
+    if (!email) return;
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await checkEmail(email);
+      switch (result.status) {
+        case "not_allowed":
+          setState("not_allowed");
+          break;
+        case "new_user":
+          await sendMagicLink(email);
+          setState("magic_link_sent");
+          break;
+        case "existing_user":
+          setState("password");
+          break;
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignIn = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await signInWithPassword(email, password);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Invalid credentials");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await resetPassword(email);
+      setState("reset_sent");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBack = () => {
+    setState("email");
+    setError(null);
+    setPassword("");
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="w-full max-w-sm px-6">
+        <h1 className="text-2xl font-semibold mb-8">ScOp LP Portal</h1>
+
+        {state === "email" && (
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleEmailContinue()}
+              className="mt-1"
+              autoFocus
+            />
+            <Button
+              onClick={handleEmailContinue}
+              disabled={loading || !email}
+              className="w-full mt-4"
+            >
+              {loading ? "Loading..." : "Continue"}
+            </Button>
+            {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+          </div>
+        )}
+
+        {state === "not_allowed" && (
+          <div>
+            <p className="text-sm">Contact ScOp for access.</p>
+            <button onClick={handleBack} className="text-sm underline mt-4">
+              Back
+            </button>
+          </div>
+        )}
+
+        {(state === "magic_link_sent" || state === "reset_sent") && (
+          <div>
+            <p className="text-sm">
+              {state === "magic_link_sent"
+                ? "Check your email for a login link."
+                : "Check your email for a password reset link."}
+            </p>
+            <button onClick={handleBack} className="text-sm underline mt-4">
+              Back
+            </button>
+          </div>
+        )}
+
+        {state === "password" && (
+          <div>
+            <p className="text-sm text-gray-500 mb-4">{email}</p>
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSignIn()}
+              className="mt-1"
+              autoFocus
+            />
+            <Button
+              onClick={handleSignIn}
+              disabled={loading || !password}
+              className="w-full mt-4"
+            >
+              {loading ? "Loading..." : "Sign in"}
+            </Button>
+            <div className="flex justify-between mt-3">
+              <button
+                onClick={handleForgotPassword}
+                className="text-sm underline"
+              >
+                Forgot password
+              </button>
+              <button onClick={handleBack} className="text-sm underline">
+                Back
+              </button>
+            </div>
+            {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
