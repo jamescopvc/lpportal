@@ -51,8 +51,9 @@ export async function sendMagicLink(email: string) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    return { success: false, error: error.message };
   }
+  return { success: true };
 }
 
 /** Password login for returning users. Redirects on success. */
@@ -61,14 +62,14 @@ export async function signInWithPassword(email: string, password: string) {
 
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
-    throw new Error(error.message);
+    return { success: false, error: "Invalid email or password" };
   }
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    throw new Error("Authentication failed");
+    return { success: false, error: "Authentication failed" };
   }
 
   // Update last_login_at and fetch role in one query
@@ -136,8 +137,9 @@ export async function resetPassword(email: string) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    return { success: false, error: error.message };
   }
+  return { success: true };
 }
 
 /** Sign out and redirect to login. */

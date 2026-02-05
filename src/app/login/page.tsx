@@ -37,8 +37,12 @@ export default function LoginPage() {
           setState("not_allowed");
           break;
         case "new_user":
-          await sendMagicLink(email);
-          setState("magic_link_sent");
+          const magicResult = await sendMagicLink(email);
+          if (magicResult && !magicResult.success) {
+            setError(magicResult.error);
+          } else {
+            setState("magic_link_sent");
+          }
           break;
         case "existing_user":
           setState("password");
@@ -56,10 +60,14 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      await signInWithPassword(email, password);
+      const result = await signInWithPassword(email, password);
+      if (result && !result.success) {
+        setError(result.error);
+        setLoading(false);
+      }
+      // If successful, redirect happens automatically
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid credentials");
-    } finally {
       setLoading(false);
     }
   };
@@ -69,8 +77,12 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      await resetPassword(email);
-      setState("reset_sent");
+      const result = await resetPassword(email);
+      if (result && !result.success) {
+        setError(result.error);
+      } else {
+        setState("reset_sent");
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
