@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import ReactMarkdown from "react-markdown";
+import rehypeSanitize from "rehype-sanitize";
+import remarkGfm from "remark-gfm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -48,7 +50,14 @@ export default async function UpdateDetailPage({
         </p>
       )}
       <div className="mt-8 prose max-w-none">
-        {update.body ? <ReactMarkdown>{update.body}</ReactMarkdown> : null}
+        {update.body ? (
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeSanitize]}
+          >
+            {update.body}
+          </ReactMarkdown>
+        ) : null}
       </div>
     </div>
   );

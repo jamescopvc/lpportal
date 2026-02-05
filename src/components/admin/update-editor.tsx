@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ReactMarkdown from "react-markdown";
+import rehypeSanitize from "rehype-sanitize";
+import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -169,7 +171,12 @@ export function UpdateEditor({ funds, initialUpdate }: Props) {
           <Label>Preview</Label>
           <div className="mt-1 border px-3 py-2 h-64 overflow-y-auto text-sm prose prose-sm max-w-none">
             {body ? (
-              <ReactMarkdown>{body}</ReactMarkdown>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeSanitize]}
+              >
+                {body}
+              </ReactMarkdown>
             ) : (
               <p className="text-gray-400 italic">Preview will appear here</p>
             )}
