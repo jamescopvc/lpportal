@@ -145,13 +145,13 @@ export function MetricsSheet({
           <table className="w-full border-collapse text-left">
             <thead>
               <tr className="border-b">
-                <th className="text-xs font-medium text-gray-500 pb-2 pr-4 min-w-[180px]">
+                <th className="text-xs font-medium text-gray-500 pb-2 pr-4 min-w-[180px] sticky left-0 bg-white z-10">
                   Metric
                 </th>
                 {metrics.map((m) => (
                   <th
                     key={m.id}
-                    className="text-xs font-medium text-gray-500 pb-2 px-1 min-w-[100px]"
+                    className="text-xs font-medium text-gray-500 pb-2 px-3 min-w-[120px]"
                   >
                     Q{m.quarter} {m.year}
                   </th>
@@ -161,9 +161,9 @@ export function MetricsSheet({
             <tbody>
               {METRIC_DEFS.map(({ key, label }) => (
                 <tr key={key} className="border-b border-gray-100">
-                  <td className="text-sm py-0.5 pr-4">{label}</td>
+                  <td className="text-sm py-3 pr-4 sticky left-0 bg-white">{label}</td>
                   {metrics.map((m) => (
-                    <td key={m.id} className="px-0">
+                    <td key={m.id} className="px-2 py-2">
                       <InlineCell
                         value={
                           m[key as keyof FundMetrics] as number | null

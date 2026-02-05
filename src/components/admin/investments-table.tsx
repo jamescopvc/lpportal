@@ -57,14 +57,17 @@ interface Props {
   initialData: Investment[];
   funds: Fund[];
   companies: Company[];
+  initialFundId: string;
 }
 
 export function InvestmentsTable({
   initialData,
   funds,
   companies,
+  initialFundId,
 }: Props) {
   const [investments, setInvestments] = useState<Investment[]>(initialData);
+  const [selectedFundId, setSelectedFundId] = useState(initialFundId);
   const [addOpen, setAddOpen] = useState(false);
   const [saved, setSaved] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -141,6 +144,14 @@ export function InvestmentsTable({
     if (inv) setReminder(inv.companies?.name ?? "this company");
   };
 
+  const filteredInvestments = investments
+    .filter((inv) => inv.fund_id === selectedFundId)
+    .sort((a, b) => {
+      if (!a.investment_date) return 1;
+      if (!b.investment_date) return -1;
+      return b.investment_date.localeCompare(a.investment_date);
+    });
+
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -149,6 +160,23 @@ export function InvestmentsTable({
           {saved && <span className="text-sm text-gray-500">Saved</span>}
           <Button onClick={() => setAddOpen(true)}>+ Add Row</Button>
         </div>
+      </div>
+
+      {/* Fund tabs */}
+      <div className="flex gap-2 mb-4">
+        {funds.map((fund) => (
+          <button
+            key={fund.id}
+            onClick={() => setSelectedFundId(fund.id)}
+            className={`text-sm px-3 py-1 border ${
+              selectedFundId === fund.id
+                ? "font-semibold border-black"
+                : "border-gray-300"
+            }`}
+          >
+            {fund.name}
+          </button>
+        ))}
       </div>
 
       {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
@@ -179,7 +207,7 @@ export function InvestmentsTable({
             </tr>
           </thead>
           <tbody>
-            {investments.map((inv) => (
+            {filteredInvestments.map((inv) => (
               <tr key={inv.id} className="border-b border-gray-100">
                 {/* Company -- read only after creation */}
                 <td className="px-1 text-sm">

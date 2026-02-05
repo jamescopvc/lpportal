@@ -9,11 +9,14 @@ export default async function InvestmentsPage() {
     getFunds(),
     getCompanies(),
   ]);
+  const defaultFundId = funds[0]?.id;
+
   return (
     <InvestmentsTable
       initialData={investments}
       funds={funds}
       companies={companies}
+      initialFundId={defaultFundId ?? ""}
     />
   );
 }

@@ -9,9 +9,10 @@ interface InlineCellProps {
   value: string | number | null;
   onSave: (value: string) => Promise<void>;
   type?: "text" | "number" | "date";
+  displayFormat?: (value: string | number | null) => string;
 }
 
-export function InlineCell({ value, onSave, type = "text" }: InlineCellProps) {
+export function InlineCell({ value, onSave, type = "text", displayFormat }: InlineCellProps) {
   const [editing, setEditing] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -54,7 +55,7 @@ export function InlineCell({ value, onSave, type = "text" }: InlineCellProps) {
       onClick={startEditing}
       className="cursor-pointer hover:bg-gray-50 px-1 py-0.5 min-h-[24px] text-sm"
     >
-      {value ?? "—"}
+      {displayFormat ? displayFormat(value) : (value ?? "—")}
     </div>
   );
 }

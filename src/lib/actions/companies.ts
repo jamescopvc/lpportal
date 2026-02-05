@@ -17,7 +17,10 @@ export async function addCompany(
     sector: string;
     location: string;
     status: string;
+    total_invested: string;
+    first_investment_date: string;
     website_url: string;
+    description: string;
   },
   fundIds: string[]
 ) {

@@ -289,7 +289,7 @@ export function PortfolioTables({ fundName, companies, investments }: Props) {
         <SortableTable
           data={companyData}
           columns={companyColumns as ColumnDef<any>[]}
-          initialSorting={[{ id: "first_investment_date", desc: false }]}
+          initialSorting={[{ id: "first_investment_date", desc: true }]}
         />
       ) : (
         <SortableTable data={investmentData} columns={investmentColumns as ColumnDef<any>[]} />
